@@ -22,6 +22,15 @@ func newEncCache(k typeKey) (*encCache, error) {
 	encFields := make([]encField, len(fields))
 
 	for i, f := range fields {
+
+		fn := encodeDurationHack(f.typ)
+		if fn != nil {
+			encFields[i] = encField{
+				field:      f,
+				encodeFunc: fn,
+			}
+		}
+
 		fn, err := encodeFn(f.typ)
 		if err != nil {
 			return nil, err

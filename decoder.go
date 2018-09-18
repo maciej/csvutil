@@ -246,9 +246,13 @@ func (d *Decoder) fields(k typeKey) ([]decField, error) {
 			continue
 		}
 
-		fn, err := decodeFn(f.typ)
-		if err != nil {
-			return nil, err
+		fn := decodeDurationHack(f.typ)
+		if fn == nil {
+			innerFn, err := decodeFn(f.typ)
+			if err != nil {
+				return nil, err
+			}
+			fn = innerFn
 		}
 
 		df := decField{
